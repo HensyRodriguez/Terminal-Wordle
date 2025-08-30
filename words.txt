@@ -41,7 +41,6 @@ ghost
 sword
 arrow
 spear
-shield
 crown
 money
 trade
@@ -85,7 +84,6 @@ tears
 blood
 flesh
 bones
-nerves
 brain
 souls
 faith
