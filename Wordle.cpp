@@ -5,6 +5,7 @@
 #include <string>
 #include <string_view>
 #include <filesystem>
+#include <unordered_map>
 #include <vector>
 
 const std::string_view ANSI_CLEAR_ATTRIB {"\x1b[0m"};
@@ -14,17 +15,17 @@ const std::string_view MY_ANSI_GREEN     {"\x1b[38;2;0;255;0m"};
 
 std::vector<std::string> englishVector{};
 
-/**
+/** Visual example on how it'll work
  * 1. word = plums
  * 2. result = ""
  * 3. wordGuessed = boats
- * 4. print("Doesn't match") attempts go down by 1 max 5 attempts
+ * 4. print("Doesn't match") attempts go down by 1 max n attempts
  * 5.result = ----s
  * 6. Go back to 3 but make a new guess
  **/
 
-static void clearScreen() {std::cout << "\x1b[J";}
-static void topLeftCurs() {std::cout << "\x1b[H";}
+inline void clearScreen() {std::cout << "\x1b[J";}
+inline void topLeftCurs() {std::cout << "\x1b[H";}
 bool fileToVector (const std::filesystem::path& filename);
 
 
@@ -72,27 +73,37 @@ int main(void)
             }
         }
 
-        
-        for(size_t i{0}; i < guessed.size(); i++)
-        {
-            if(user_guess[i] == guessed[i])
-            {
-                std::cout << MY_ANSI_GREEN << user_guess[i]
-                          << ANSI_CLEAR_ATTRIB;
-            } else {
-                if(word.find(user_guess[i]) != std::string::npos) {
-                             std::cout << MY_ANSI_ORANGE << user_guess[i]
-                              << ANSI_CLEAR_ATTRIB;
-                             
-                } else {
-                    std::cout << MY_ANSI_RED << user_guess[i]
-                              << ANSI_CLEAR_ATTRIB;
-                }
-                
+        // rebuild frequency map each guess
+        std::unordered_map<char, int> freq;
+        for (char c : word) {
+            freq[c]++; // Incr the key(int) per each value (char) found
+        }
+
+        // If a guess char matches make that char index color green
+        std::vector<std::string> colors(word.size(), "");
+        for (size_t i = 0; i < word.size(); i++) {
+            if (user_guess[i] == word[i]) {
+                colors[i] = MY_ANSI_GREEN; // Apply index to be green
+                freq[user_guess[i]]--; // If matches reduce key freq
             }
         }
 
-        std::cout << "\nGuessed: " << guessed << '\n';
+        // Handle coloring orange or red if valid or duplicate
+        for (size_t i = 0; i < word.size(); i++) {
+            if (!colors[i].empty()) continue; // already green
+            char c = user_guess[i];
+            if (freq[c] > 0) { // If value key freq is more than 0, dup found
+                colors[i] = MY_ANSI_ORANGE;
+                freq[c]--; // Reduce the key's value
+            } else {
+                colors[i] = MY_ANSI_RED; // No dup and no val thus red
+            }
+        }
+
+        // Modify to index color, then char and then clear ANSI attrib.
+        for (size_t i = 0; i < word.size(); i++) {
+            std::cout << colors[i] << user_guess[i] << ANSI_CLEAR_ATTRIB;
+        }
 
         if(guessed == word) {
             break;
