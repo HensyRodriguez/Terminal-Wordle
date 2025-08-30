@@ -3,13 +3,14 @@
 #include <fstream>
 #include <random>
 #include <string>
+#include <string_view>
 #include <filesystem>
 #include <vector>
 
-const std::string ANSI_CLEAR_ATTRIB {"\x1b[0m"};
-const std::string MY_ANSI_RED       {"\x1b[38;2;255;0;0m"};
-const std::string MY_ANSI_ORANGE    {"\x1b[38;2;255;200;0m"};
-const std::string MY_ANSI_GREEN     {"\x1b[38;2;0;255;0m"};
+const std::string_view ANSI_CLEAR_ATTRIB {"\x1b[0m"};
+const std::string_view MY_ANSI_RED       {"\x1b[38;2;255;0;0m"};
+const std::string_view MY_ANSI_ORANGE    {"\x1b[38;2;255;200;0m"};
+const std::string_view MY_ANSI_GREEN     {"\x1b[38;2;0;255;0m"};
 
 std::vector<std::string> englishVector{};
 
