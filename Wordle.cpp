@@ -43,9 +43,7 @@ int main(void)
     std::string word{englishVector[dist(gen)]};
     std::string guessed(word.size(), '-');
 
-    unsigned int numGuessed{5};
-
-    std::vector<std::string> colors(guessed.size(), "");
+    unsigned int numGuessed{5};;
 
     topLeftCurs();
     clearScreen();
